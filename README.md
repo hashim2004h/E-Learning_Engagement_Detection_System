@@ -1,10 +1,10 @@
-# 🎓 E-Learning Engagement Detection System
+# E-Learning Engagement Detection System
 
 An AI-powered virtual classroom monitoring system that detects student engagement in real time using computer vision techniques. The system analyzes facial landmarks, gaze direction, head pose, blink activity, noise level, and mouse interaction to evaluate attentiveness during online learning sessions.
 
 ---
 
-## 🧠 Engagement Parameters
+## Engagement Parameters
 - Eye Aspect Ratio (Blink Detection)  
 - Head Pose Estimation  
 - Gaze Tracking  
@@ -13,7 +13,7 @@ An AI-powered virtual classroom monitoring system that detects student engagemen
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 - Python  
 - Flask  
 - OpenCV  
@@ -22,7 +22,7 @@ An AI-powered virtual classroom monitoring system that detects student engagemen
 
 ---
 
-## 📊 Output Metrics
+## Output Metrics
 - Engagement Status  
 - Blink Count  
 - Head Pose  
