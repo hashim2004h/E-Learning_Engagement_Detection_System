@@ -1,41 +1,34 @@
 # 🎓 E-Learning Engagement Detection System
 
-An AI-based real-time student engagement monitoring system for online learning environments.  
-This project uses computer vision techniques to analyze facial landmarks, eye movement and head pose through a webcam to estimate user engagement levels during e-learning sessions.
+An AI-powered virtual classroom monitoring system that detects student engagement in real time using computer vision techniques. The system analyzes facial landmarks, gaze direction, head pose, blink activity, noise level, and mouse interaction to evaluate attentiveness during online learning sessions.
 
 ---
 
-## 📌 Overview
-
-This system captures live video feed using a laptop webcam and processes it to:
-
-- Detect face and eye movements  
-- Monitor user attention  
-- Calculate engagement score  
-- Display engagement level in real-time  
-- Generate engagement reports  
-
-Built using Python, OpenCV, MediaPipe, and Flask.
+## 🧠 Engagement Parameters
+- Eye Aspect Ratio (Blink Detection)  
+- Head Pose Estimation  
+- Gaze Tracking  
+- Noise Level Monitoring  
+- Mouse Click Activity  
 
 ---
 
-## 🚀 Features
-
-- Real-time webcam monitoring  
-- Eye-based attention tracking  
-- Engagement score calculation  
-- Live score overlay  
-- Web dashboard using Flask  
-- MongoDB-based data storage  
+## 🛠️ Technologies Used
+- Python  
+- Flask  
+- OpenCV  
+- MediaPipe  
+- MongoDB  
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Frontend:** HTML, CSS, JavaScript  
-- **Backend:** Python (Flask)  
-- **Libraries:** OpenCV, MediaPipe, NumPy  
-- **Database:** MongoDB  
+## 📊 Output Metrics
+- Engagement Status  
+- Blink Count  
+- Head Pose  
+- Eye Aspect Ratio  
+- Noise Level  
+- Mouse Clicks  
 
 ---
 
