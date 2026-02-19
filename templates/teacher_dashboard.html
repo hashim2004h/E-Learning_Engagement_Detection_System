@@ -1,0 +1,900 @@
+{# templates/teacher_dashboard.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Dashboard | EduConnect Pro</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --primary-light: #eef2ff;
+            --secondary: #06d6a0;
+            --accent: #ff6b6b;
+            --dark: #2b2d42;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --success: #06d6a0;
+            --warning: #ffd166;
+            --danger: #ef476f;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f9fafc;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .welcome-section h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .welcome-section p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, var(--primary), #5e72e4);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #4a5bd1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.35);
+        }
+
+        /* Tabs Navigation */
+        .tabs-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .tabs-nav {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 18px 20px;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Meetings Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-header h2 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: var(--dark);
+        }
+
+        .new-meeting-btn {
+            background: linear-gradient(135deg, var(--primary), #5e72e4);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+        }
+
+        .new-meeting-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), #4a5bd1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.35);
+        }
+
+        .no-meetings {
+            background: white;
+            padding: 40px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            font-size: 1.1rem;
+            color: var(--gray);
+        }
+
+        .no-meetings i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 20px;
+        }
+
+        /* Meetings Grid */
+        .meetings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .meeting-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid var(--light-gray);
+        }
+
+        .meeting-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: var(--primary-light);
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .meeting-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .meeting-code {
+            background: var(--primary);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .meeting-date {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .report-btn {
+            background: var(--light-gray);
+            color: var(--gray);
+        }
+
+        .report-btn:hover {
+            background: var(--warning);
+            color: #333;
+        }
+
+        .start-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: #05b388;
+        }
+
+        .stop-btn {
+            background: var(--danger);
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: #d43a60;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .students-header {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .student-list {
+            list-style: none;
+        }
+
+        .student-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-info {
+            line-height: 1.4;
+        }
+
+        .student-name {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .student-email {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .engagement-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .engagement-high {
+            background: rgba(6, 214, 160, 0.15);
+            color: var(--success);
+        }
+
+        .engagement-medium {
+            background: rgba(255, 209, 102, 0.15);
+            color: #e6ac00;
+        }
+
+        .engagement-low {
+            background: rgba(239, 71, 111, 0.15);
+            color: var(--danger);
+        }
+
+        .engagement-na {
+            background: var(--light-gray);
+            color: var(--gray);
+        }
+
+        /* Analytics Section */
+        .analytics-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+        }
+
+        .no-analytics {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .no-analytics i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 20px;
+        }
+
+        .accordion {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background: var(--primary-light);
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .accordion-header:hover {
+            background: #e1e7ff;
+        }
+
+        .accordion-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .accordion-code {
+            background: var(--primary);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .accordion-icon {
+            transition: var(--transition);
+        }
+
+        .accordion-header.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        /* Popup Modal */
+        .popup-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: popupIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-content i {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .popup-message {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .popup-close {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .popup-close:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .meetings-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .tabs-nav {
+                flex-direction: column;
+            }
+
+            .meetings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .card-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h1>Welcome, {{ current_user.user_data['full_name'] }}!</h1>
+                <p>Here are your active classes and analytics</p>
+            </div>
+            <button class="logout-btn" onclick="location.href='{{ url_for('logout') }}'">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="meetings">
+                    <i class="fas fa-video"></i> Active Meetings
+                </button>
+                <button class="tab-btn" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </button>
+            </div>
+
+            <!-- Meetings Tab -->
+            <div class="tab-content active" id="meetings">
+                <div class="section-header">
+                    <h2>My Active Meetings</h2>
+                    <button class="new-meeting-btn" id="createMeeting">
+                        <i class="fas fa-plus"></i> New Meeting
+                    </button>
+                </div>
+
+                {% if meetings|length == 0 %}
+                    <div class="no-meetings">
+                        <i class="fas fa-calendar-times"></i>
+                        <p>No active meetings. Click “New Meeting” to get started.</p>
+                    </div>
+                {% else %}
+                    <div class="meetings-grid">
+                        {% for meeting in meetings %}
+                            <div class="meeting-card">
+                                <div class="card-header">
+                                    <div class="meeting-info">
+                                        <div class="meeting-code">{{ meeting.code }}</div>
+                                        <div class="meeting-date">
+                                            Created:
+                                            {{ meeting.created_at|datetimeformat('%d %b %Y, %I:%M %p') }}
+                                        </div>
+                                    </div>
+                                    <div class="card-actions">
+                                        <button
+                                          class="action-btn report-btn"
+                                          data-code="{{ meeting.code }}"
+                                        >
+                                            <i class="fas fa-file-pdf"></i>
+                                        </button>
+                                        <button
+                                          class="action-btn start-btn"
+                                          data-code="{{ meeting.code }}"
+                                        >
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                        <button
+                                          class="action-btn stop-btn"
+                                          data-code="{{ meeting.code }}"
+                                        >
+                                            <i class="fas fa-stop"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="students-header">
+                                        <i class="fas fa-users"></i> Joined Students
+                                    </h3>
+                                    {% if meeting.students and meeting.students|length > 0 %}
+                                        <ul class="student-list">
+                                            {% for student in meeting.students %}
+                                                <li class="student-item">
+                                                    <div class="student-info">
+                                                        <div class="student-name">
+                                                            {{ student.full_name }}
+                                                        </div>
+                                                        <div class="student-email">
+                                                            {{ student.email }}
+                                                        </div>
+                                                    </div>
+                                                    {% if student.engagement is not none %}
+                                                        {% set pct = student.engagement %}
+                                                        {% if pct >= 80 %}
+                                                            <div class="engagement-badge engagement-high">
+                                                                {{ pct }}%
+                                                            </div>
+                                                        {% elif pct >= 60 %}
+                                                            <div class="engagement-badge engagement-medium">
+                                                                {{ pct }}%
+                                                            </div>
+                                                        {% else %}
+                                                            <div class="engagement-badge engagement-low">
+                                                                {{ pct }}%
+                                                            </div>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <div class="engagement-badge engagement-na">
+                                                            N/A
+                                                        </div>
+                                                    {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p class="text-muted">No students have joined yet.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics">
+                <div class="section-header">
+                    <h2>Engagement Analytics</h2>
+                </div>
+
+                <div class="analytics-container">
+                    {% if meetings|length == 0 %}
+                        <div class="no-analytics">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>No meetings to show analytics for. Create a meeting first.</p>
+                        </div>
+                    {% else %}
+                        <div class="accordion">
+                            {% for meeting in meetings %}
+                                <div class="accordion-item">
+                                    <div class="accordion-header">
+                                        <div class="accordion-title">
+                                            <i class="fas fa-chart-bar"></i> Meeting:
+                                            <span class="accordion-code">{{ meeting.code }}</span>
+                                        </div>
+                                        <i class="fas fa-chevron-down accordion-icon"></i>
+                                    </div>
+                                    <div class="accordion-content">
+                                        <div class="chart-container">
+                                            <canvas id="chart-{{ meeting.code }}"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Modal -->
+    <div class="popup-modal" id="popup">
+        <div class="popup-content">
+            <i class="fas fa-check-circle"></i>
+            <p class="popup-message" id="popupMessage">Action successful!</p>
+            <button class="popup-close">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ---------- Tab switching functionality ----------
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // ---------- Accordion functionality ----------
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.classList.toggle('active');
+                const content = header.nextElementSibling;
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'block';
+                }
+            });
+        });
+
+        // ---------- Popup functionality ----------
+        const popup = document.getElementById('popup');
+        const popupMessage = document.getElementById('popupMessage');
+        const popupClose = document.querySelector('.popup-close');
+
+        function showPopup(message) {
+            popupMessage.textContent = message;
+            popup.style.display = 'flex';
+        }
+
+        popupClose.addEventListener('click', () => {
+            popup.style.display = 'none';
+        });
+
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                popup.style.display = 'none';
+            }
+        });
+
+        // ---------- “New Meeting” button handler ----------
+        document.getElementById('createMeeting').addEventListener('click', async () => {
+            const btn = document.getElementById('createMeeting');
+            btn.disabled = true;
+            try {
+                const res = await fetch('/generate-meeting', { method: 'POST' });
+                const data = await res.json();
+                if (data.code) {
+                    showPopup('New meeting created: ' + data.code);
+                    setTimeout(() => location.reload(), 1500);
+                } else if (data.error) {
+                    showPopup(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+                showPopup('Error creating meeting.');
+            }
+            btn.disabled = false;
+        });
+
+        // ---------- “Start Meeting” buttons ----------
+        document.querySelectorAll('.start-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const code = button.getAttribute('data-code');
+                showPopup('Meeting started: ' + code);
+                fetch('/start-meeting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                }).catch(err => console.error('Error starting meeting:', err));
+                button.disabled = true;
+            });
+        });
+
+        // ---------- “Stop Meeting” buttons ----------
+        document.querySelectorAll('.stop-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const code = button.getAttribute('data-code');
+                showPopup('Meeting ended: ' + code);
+                fetch('/stop-meeting', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove card from grid
+                        const card = button.closest('.meeting-card');
+                        if (card) card.remove();
+                    }
+                })
+                .catch(err => console.error('Error stopping meeting:', err));
+            });
+        });
+
+        // ---------- “Generate PDF Report” buttons ----------
+        document.querySelectorAll('.report-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const code = button.getAttribute('data-code');
+                showPopup('Generating PDF for ' + code + '…');
+                window.location.href = `/export-pdf/${code}`;
+            });
+        });
+
+        // ---------- Initialize charts on load ----------
+        window.addEventListener('load', () => {
+            {% for meeting in meetings %}
+                (function renderChartFor_{{ meeting.code }}() {
+                    const ctx = document.getElementById('chart-{{ meeting.code }}').getContext('2d');
+                    fetch(`/api/meeting-engagement/{{ meeting.code }}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: data.timestamps,
+                                    datasets: [{
+                                        label: 'Engagement %',
+                                        data: data.engagement_percent,
+                                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                                        borderColor: '#4361ee',
+                                        borderWidth: 3,
+                                        tension: 0.3,
+                                        fill: true,
+                                        pointBackgroundColor: '#fff',
+                                        pointBorderColor: '#4361ee',
+                                        pointBorderWidth: 2,
+                                        pointRadius: 5
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100,
+                                            grid: { drawBorder: false }
+                                        },
+                                        x: {
+                                            grid: { display: false }
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: { display: false }
+                                    }
+                                }
+                            });
+                        })
+                        .catch(err => console.error('Chart load error:', err));
+                })();
+            {% endfor %}
+        });
+    </script>
+</body>
+</html>

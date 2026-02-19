@@ -1,0 +1,10 @@
+{
+    "MONGO_URI": "mongodb://localhost:27017",
+    "DB_NAME": "engagement_db",
+    "SMTP_SERVER": "smtp.gmail.com",
+    "SMTP_PORT": 465,
+    "EMAIL_USER": "elearn2k25@gmail.com",
+    "EMAIL_PASSWORD": "cite kdyl oqcy rnkw",
+    "SECRET_KEY": "your-flask-secret-key-here",
+    "OTP_EXPIRY_MINUTES": 10
+}

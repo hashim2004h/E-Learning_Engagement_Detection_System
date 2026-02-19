@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ title if title else "E-Learn - Engagement Detection System" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Fonts & Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <!-- Bootstrap 4 CSS -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <style>
+    :root {
+      --primary-blue: #4b66f5;
+      --secondary-blue: #6a82fb;
+      --accent-purple: #8a4fff;
+      --text-dark: #2a2a2a;
+      --text-light: #6c757d;
+      --bg-gradient: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      --card-bg: #ffffff;
+      --bg-light: #f8f9fa;
+      --border-color: #dddddd;
+      --accent-green: #34d399;
+      --accent-red: #ef4444;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+      --transition: all 0.3s ease;
+      --header-height: 70px;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      color: var(--text-dark);
+      background: var(--bg-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ====== HEADER ====== */
+    .main-header {
+      background: var(--bg-gradient);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(75, 102, 245, 0.15);
+    }
+
+    .brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+
+    .brand i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 0 15px;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-weight: 500;
+      padding: 0.8rem 1.2rem !important;
+      position: relative;
+      transition: var(--transition);
+      border-radius: 30px;
+      margin: 0 3px;
+    }
+
+    .nav-link:hover {
+      color: white !important;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-link.active {
+      color: white !important;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    /* Sign Out Button */
+    .btn-gradient {
+      background: white;
+      color: var(--primary-blue) !important;
+      border: none;
+      padding: 0.6rem 1.8rem;
+      border-radius: 30px;
+      transition: var(--transition);
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(75, 102, 245, 0.25);
+    }
+
+    .btn-gradient:hover {
+      background: #f0f0ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(75, 102, 245, 0.35);
+    }
+
+    /* Mobile Menu Toggler */
+    .navbar-toggler {
+      border: none;
+      padding: 0.5rem;
+    }
+
+    .navbar-toggler:focus {
+      outline: none;
+    }
+
+    .navbar-toggler-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* ====== MAIN CONTENT ====== */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container .main-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* If classroom endpoint, allow full-screen layout */
+    .fullscreen-content {
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ====== FOOTER ====== */
+    .main-footer {
+      background: var(--text-dark);
+      color: white;
+      padding: 4rem 0 2rem;
+      margin-top: auto;
+      position: relative;
+      overflow: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(75, 102, 245, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(138, 79, 255, 0.1) 0%, transparent 20%);
+    }
+
+    .footer-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-brand i {
+      margin-right: 10px;
+      color: var(--secondary-blue);
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      padding: 0.5rem 0;
+      display: inline-block;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .footer-links a:hover::before {
+      content: "→";
+      position: absolute;
+      left: -15px;
+      transition: var(--transition);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .social-links a:hover {
+      background: var(--primary-blue);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(75, 102, 245, 0.3);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .contact-item i {
+      margin-right: 10px;
+      color: var(--secondary-blue);
+      margin-top: 5px;
+    }
+
+    .footer-divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 3rem 0 2rem;
+    }
+
+    .copyright {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+    }
+
+    /* Floating elements for visual interest */
+    .floating-circle {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .circle-1 {
+      width: 150px;
+      height: 150px;
+      background: rgba(138, 79, 255, 0.08);
+      top: 10%;
+      right: -50px;
+    }
+
+    .circle-2 {
+      width: 100px;
+      height: 100px;
+      background: rgba(75, 102, 245, 0.1);
+      bottom: 20%;
+      left: -30px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background: rgba(75, 102, 245, 0.95);
+        border-radius: 15px;
+        padding: 1rem;
+        margin-top: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+      
+      .nav-link {
+        padding: 0.8rem 1rem !important;
+        margin: 5px 0;
+      }
+      
+      .nav-link.active::after {
+        display: none;
+      }
+      
+      .main-card {
+        padding: 1.5rem !important;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      .brand {
+        font-size: 1.5rem;
+      }
+      
+      .btn-gradient {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
+      }
+      
+      .main-content {
+        padding: 1.5rem 0;
+      }
+      
+      .footer-content .col-lg-4 {
+        margin-bottom: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating background elements -->
+  <div class="floating-circle circle-1"></div>
+  <div class="floating-circle circle-2"></div>
+
+  <!-- ====== HEADER ====== -->
+  <header class="main-header">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg p-0">
+        <div class="nav-container">
+          <a class="navbar-brand brand" href="{{ url_for('index') }}">
+            <i class="fas fa-graduation-cap"></i>E-Learn
+          </a>
+
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+              <li class="nav-item">
+                <a
+                  class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
+                  href="{{ url_for('index') }}"
+                >
+                  <i class="fas fa-home mr-1"></i>Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}"
+                  href="{{ url_for('dashboard') }}"
+                >
+                  <i class="fas fa-chart-line mr-1"></i>Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-chart-pie mr-1"></i>Analytics
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="fas fa-headset mr-1"></i>Support
+                </a>
+              </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+              <a href="{{ url_for('logout') }}" class="btn btn-gradient">
+                <i class="material-icons mr-2">logout</i>Sign Out
+              </a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <main class="main-content flex-grow-1">
+    {% if request.endpoint != "classroom" %}
+      <div class="container">
+        <div class="main-card">
+    {% endif %}
+
+          {% block content %}{% endblock %}
+
+    {% if request.endpoint != "classroom" %}
+        </div>
+      </div>
+    {% endif %}
+  </main>
+
+  <!-- ====== FOOTER ====== -->
+  <footer class="main-footer">
+    <div class="container footer-content">
+      <div class="row">
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          <h3 class="footer-brand">
+            <i class="fas fa-graduation-cap"></i>E-Learn
+          </h3>
+          <p style="color: rgba(255,255,255,0.7);">
+            Transformative learning experiences powered by AI-driven engagement
+            analytics.
+          </p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-5 mb-lg-0">
+          <h5 class="text-white mb-4">Quick Links</h5>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-4">
+          <h5 class="text-white mb-4">Contact Us</h5>
+          <div class="contact-item">
+            <i class="material-icons">email</i>
+            <a href="mailto:support@e-learn.com" style="color: rgba(255,255,255,0.7);">
+              support@e-learn.com
+            </a>
+          </div>
+          <div class="contact-item">
+            <i class="material-icons">phone</i>
+            <a href="tel:+15551234567" style="color: rgba(255,255,255,0.7);">
+              +1 (555) 123-4567
+            </a>
+          </div>
+          <div class="contact-item">
+            <i class="material-icons">location_on</i>
+            <span style="color: rgba(255,255,255,0.7);">
+              Global Learning Hub
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+      <div class="copyright">
+        &copy; 2024 E-Learn. Empowering digital education worldwide.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====== SCRIPTS ====== -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+  ></script>
+  <script
+    src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+  <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learn - Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4B66F5;
+            --text-dark: #222;
+            --text-light: #666;
+            --error-red: #ff4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Entrance Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes inputFocus {
+            from { box-shadow: 0 0 0 0 rgba(75, 102, 245, 0.2); }
+            to { box-shadow: 0 0 0 15px rgba(75, 102, 245, 0); }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .left-column {
+            flex: 1;
+            background: #FFFFFF;
+            padding: 4rem 8%;
+            position: relative;
+            animation: fadeInLeft 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .right-column {
+            flex: 1;
+            background: var(--primary-blue);
+            padding: 4rem 5%;
+            position: relative;
+            animation: fadeInRight 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .signup-header h1 {
+            color: var(--text-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-header p.subheading {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.4s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+        .form-group:nth-child(4) { animation-delay: 0.8s; }
+
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+            animation: inputFocus 1s ease infinite;
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .error-message.show {
+            max-height: 50px;
+        }
+
+        .role-select {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .role-option {
+            flex: 1;
+            padding: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .role-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(75, 102, 245, 0.2);
+        }
+
+        .role-option.selected {
+            border-color: var(--primary-blue);
+            background: rgba(75, 102, 245, 0.05);
+            color: var(--primary-blue);
+        }
+
+        .terms {
+            margin: 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .terms label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .terms input[type="checkbox"] {
+            display: none;
+        }
+
+        .terms label:before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .terms input:checked + label:before {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            content: '✓';
+            color: white;
+            text-align: center;
+            line-height: 18px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .login-btn:hover {
+            background: #3a52d1;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(75, 102, 245, 0.2);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        button:disabled .loading-spinner {
+            display: inline-block;
+        }
+
+        .existing-account {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-light);
+        }
+
+        .existing-account a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Right Column - Welcome Content */
+        .welcome-content {
+            color: white;
+            margin-top: 4rem;
+        }
+
+        .welcome-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .features-list {
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .feature-item .material-icons {
+            font-size: 1.8rem;
+            margin-right: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .left-column, .right-column {
+                padding: 3rem 5%;
+            }
+            .role-select {
+                flex-direction: column;
+            }
+        }
+
+        /* Smooth Teacher ID field transition */
+        #teacherIdGroup {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-column">
+            <form id="signupForm" novalidate>
+                <div class="signup-header">
+                    <h1>Create Account</h1>
+                    <p class="subheading">Join our e-learning community</p>
+                </div>
+                <!-- General Error Message -->
+                <div class="error-message" id="formError" style="display: none; margin-bottom: 1rem;"></div>
+
+                <div class="form-group">
+                    <input type="text" name="full_name" id="fullName" placeholder="Full Name" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" name="email" id="email" placeholder="Email Address" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="password" id="password" placeholder="Password (min 8 characters)" required>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="confirm_password" id="confirmPassword" placeholder="Confirm Password" required>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="role-select">
+                    <div class="role-option" onclick="selectRole('teacher', event)">Teacher</div>
+                    <div class="role-option" onclick="selectRole('student', event)">Student</div>
+                </div>
+
+                <div class="form-group" id="teacherIdGroup">
+                    <input type="text" name="teacher_id" id="teacherId" placeholder="Teacher ID (5 letters)">
+                    <div class="error-message" id="teacherIdError"></div>
+                </div>
+
+                <input type="hidden" name="user_role" id="userRole" required>
+                <div class="error-message" id="roleError"></div>
+
+                <div class="terms">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">I agree to the <a href="/terms" target="_blank">Terms</a> &amp; 
+                        <a href="/privacy" target="_blank">Privacy Policy</a></label>
+                </div>
+
+                <button type="submit" class="login-btn" id="submitBtn">
+                    <span class="loading-spinner"></span>
+                    <span class="button-text">Create Account</span>
+                </button>
+
+                <div class="existing-account">
+                    Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="right-column">
+            <div class="welcome-content">
+                <h2>Welcome to E-Learn!</h2>
+                <p>Join thousands of students and teachers in our interactive learning community</p>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="material-icons">videocam</span>
+                        Live Interactive Classes
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-icons">assignment</span>
+                        Progress Tracking
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-icons">forum</span>
+                        Community Support
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Intersection Observer for feature items
+        const features = document.querySelectorAll('.feature-item');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.5 });
+        features.forEach(feature => observer.observe(feature));
+
+        // Enhanced form submission logic
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.querySelector('.button-text').textContent = 'Creating Account...';
+
+            // Clear previous errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.textContent = '';
+                el.classList.remove('show');
+                el.style.display = 'none';
+            });
+
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch("{{ url_for('signup') }}", {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    window.location.href = data.redirect;
+                } else {
+                    if (data.errors) {
+                        for (const [field, message] of Object.entries(data.errors)) {
+                            const errorElement = document.getElementById(`${field}Error`);
+                            if (errorElement) {
+                                errorElement.textContent = message;
+                                errorElement.style.display = 'block';
+                                errorElement.classList.add('show');
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                const formError = document.getElementById('formError');
+                formError.textContent = 'An error occurred. Please try again.';
+                formError.style.display = 'block';
+                formError.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                btn.querySelector('.button-text').textContent = 'Create Account';
+            }
+        });
+
+        // Function to show error messages with smooth transitions
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            element.classList.add('show');
+        }
+
+        // Smooth Teacher ID reveal and hide based on role selection
+        function selectRole(role, event) {
+            document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('selected'));
+            event.target.classList.add('selected');
+            document.getElementById('userRole').value = role;
+            const teacherGroup = document.getElementById('teacherIdGroup');
+            if(role === 'teacher') {
+                teacherGroup.style.maxHeight = '0';
+                teacherGroup.style.display = 'block';
+                setTimeout(() => {
+                    teacherGroup.style.maxHeight = '100px';
+                }, 10);
+            } else {
+                teacherGroup.style.maxHeight = '0';
+                setTimeout(() => {
+                    teacherGroup.style.display = 'none';
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>

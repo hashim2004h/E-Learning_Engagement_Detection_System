@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="otp-container">
+    <div class="otp-card">
+        <div class="otp-header">
+            <h2>Verify Your Email</h2>
+            <p>We've sent a 6-digit code to <strong>{{ email }}</strong></p>
+        </div>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- Success Message -->
+        {% if success %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ success }}
+        </div>
+        {% endif %}
+
+        <form class="otp-form" action="{{ url_for('verify_otp') }}" method="POST">
+            <input type="hidden" name="email" value="{{ email }}">
+            
+            <div class="input-group">
+                <label for="otp">Enter OTP Code</label>
+                <input type="text" id="otp" name="otp" 
+                       placeholder="XXXXXX" 
+                       pattern="\d{6}" 
+                       title="6-digit code" 
+                       required>
+            </div>
+
+            <button type="submit" class="verify-btn">
+                <i class="fas fa-shield-check"></i>
+                Verify Account
+            </button>
+        </form>
+
+        <div class="resend-section">
+            <p>Didn't receive the code?</p>
+            <div class="resend-controls">
+                <a href="{{ url_for('resend_otp', email=email) }}" 
+                   class="resend-link" 
+                   id="resendLink">
+                    <i class="fas fa-redo-alt"></i>
+                    Resend OTP
+                </a>
+                <span id="countdown" class="countdown">(1:00)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .otp-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #f5f7fb;
+        padding: 2rem;
+    }
+
+    .otp-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .otp-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .otp-header h2 {
+        color: #2d3748;
+        margin-bottom: 0.5rem;
+    }
+
+    .otp-header p {
+        color: #718096;
+    }
+
+    .otp-form {
+        margin: 2rem 0;
+    }
+
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+        display: block;
+        color: #4a5568;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        letter-spacing: 0.5rem;
+        text-align: center;
+    }
+
+    .verify-btn {
+        width: 100%;
+        padding: 1rem;
+        background: #4B66F5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .verify-btn:hover {
+        background: #3a52d1;
+    }
+
+    .resend-section {
+        text-align: center;
+        margin-top: 2rem;
+        color: #718096;
+    }
+
+    .resend-controls {
+        margin-top: 1rem;
+    }
+
+    .resend-link {
+        color: #4B66F5;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .resend-link.disabled {
+        color: #cbd5e0;
+        pointer-events: none;
+    }
+
+    .countdown {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-error {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+</style>
+
+<script>
+    // Resend OTP countdown timer
+    let timeLeft = 60;
+    const countdownElement = document.getElementById('countdown');
+    const resendLink = document.getElementById('resendLink');
+
+    function updateCountdown() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        countdownElement.textContent = `(${minutes}:${seconds.toString().padStart(2, '0')})`;
+        
+        if(timeLeft <= 0) {
+            clearInterval(timer);
+            countdownElement.style.display = 'none';
+            resendLink.classList.remove('disabled');
+        } else {
+            timeLeft--;
+        }
+    }
+
+    // Initialize timer
+    let timer = setInterval(updateCountdown, 1000);
+
+    // Handle resend click
+    resendLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        try {
+            resendLink.classList.add('disabled');
+            timeLeft = 60;
+            countdownElement.style.display = 'block';
+            timer = setInterval(updateCountdown, 1000);
+
+            const response = await fetch(e.target.href);
+            if(!response.ok) throw new Error('Resend failed');
+            
+            // Show success message
+            window.location.reload(); // Refresh to show new success message
+        } catch (error) {
+            console.error('Resend error:', error);
+            alert('Failed to resend OTP. Please try again.');
+            resendLink.classList.remove('disabled');
+            clearInterval(timer);
+            countdownElement.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

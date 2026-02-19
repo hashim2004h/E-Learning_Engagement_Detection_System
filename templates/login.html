@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learn - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4B66F5;
+            --text-dark: #222;
+            --text-light: #666;
+            --error-red: #ff4444;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Column Styles */
+        .left-column {
+            flex: 1;
+            background: #FFFFFF;
+            padding: 4rem 8%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-content {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .signup-header {
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subheading {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            padding-left: 3rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(75, 102, 245, 0.15);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background: #3a52d1;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .existing-account {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .existing-account a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+            padding-left: 0.5rem;
+        }
+
+        /* Right Column Styles */
+        .right-column {
+            flex: 1;
+            background: var(--primary-blue);
+            padding: 4rem 5%;
+            position: relative;
+            color: white;
+        }
+
+        .welcome-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .welcome-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            font-size: 1.1rem;
+        }
+
+        .feature-item .material-icons {
+            font-size: 1.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-column, .right-column {
+                padding: 3rem 5%;
+            }
+
+            .right-column {
+                text-align: center;
+            }
+
+            .feature-item {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-column">
+            <div class="login-content">
+                <form id="loginForm">
+                    <div class="signup-header">
+                        <h1>Welcome Back</h1>
+                        <p class="subheading">Continue your learning journey with E-Learn</p>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="material-icons input-icon">mail</span>
+                        <input type="email" name="email" id="loginEmail" placeholder="Email Address" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="material-icons input-icon">lock</span>
+                        <input type="password" name="password" id="loginPassword" placeholder="Password" required>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+
+                    <button type="submit" class="login-btn">Sign In</button>
+
+                    <div class="existing-account">
+                        New to E-Learn? <a href="{{ url_for('signup') }}">Create account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="welcome-content">
+                <h2>Continue Your Journey</h2>
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="material-icons">school</span>
+                        Access personalized learning paths
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-icons">track_changes</span>
+                        Track your progress and achievements
+                    </div>
+                    <div class="feature-item">
+                        <span class="material-icons">groups</span>
+                        Connect with peers and mentors
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Clear errors
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.textContent = '';
+        el.style.display = 'none';
+    });
+
+    try {
+        const formData = new FormData(e.target);
+        const response = await fetch("{{ url_for('login') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        
+        if (response.status === 200 && data.redirect) {
+            window.location.href = data.redirect;
+        } 
+        else if (response.status === 403) {
+            // Handle unverified account
+            showVerificationError(data.error);
+        }
+        else {
+            // Show error in both fields
+            document.getElementById('emailError').textContent = data.error;
+            document.getElementById('emailError').style.display = 'block';
+            document.getElementById('passwordError').textContent = data.error;
+            document.getElementById('passwordError').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+    }
+});
+    </script>
+</body>
+</html>

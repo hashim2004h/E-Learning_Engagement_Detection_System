@@ -1,0 +1,68 @@
+{# templates/report_template.html #}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Meeting Report - {{ meeting_code }}</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .info {
+      margin-bottom: 1rem;
+    }
+    .info div {
+      margin-bottom: 0.25rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Meeting Report: {{ meeting_code }}</h1>
+
+  <div class="info">
+    <div><strong>Teacher:</strong> {{ teacher_name }} ({{ teacher_email }})</div>
+    <div><strong>Created On:</strong> {{ created_at }} UTC</div>
+    <div><strong>Overall Engagement %:</strong> {{ overall_engagement }}%</div>
+    <div><strong>Total Records:</strong> {{ total_records }}</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp (UTC)</th>
+        <th>Student</th>
+        <th>Engagement</th>
+        <th>Confidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rec in log_records %}
+        <tr>
+          <td>{{ rec.timestamp }}</td>
+          <td>{{ rec.student_name }}</td>
+          <td>{{ rec.engagement }}</td>
+          <td>{{ rec.confidence }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

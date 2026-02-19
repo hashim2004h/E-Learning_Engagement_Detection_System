@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngageDetect - AI Learning Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --accent-cyan: #22d3ee;
+            --dark-bg: #0f172a;
+            --light-text: #f8fafc;
+            --font-stack: 'Poppins', system-ui, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, 
+                rgba(15, 23, 42, 0.95) 0%,
+                rgba(37, 99, 235, 0.15) 50%,
+                rgba(15, 23, 42, 0.95) 100%),
+                url('https://images.unsplash.com/photo-1584697964358-3e14ca57658b') center/cover;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 25%,
+                rgba(34, 211, 238, 0.1) 50%,
+                transparent 75%
+            );
+            animation: backgroundFlow 20s linear infinite;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff 30%, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Animated Buttons */
+        .cta-buttons {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+            color: white;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            transition: 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            background: transparent;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(34, 211, 238, 0.15);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(34, 211, 238, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff 60%, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 6rem 2rem;
+            background: linear-gradient(45deg, 
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(37, 99, 235, 0.1) 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Testimonial Section */
+        .testimonials {
+            padding: 6rem 2rem;
+        }
+
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: "❝";
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--accent-cyan);
+            opacity: 0.3;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a1425;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .social-links {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--light-text);
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-cyan);
+            transform: translateY(-3px);
+        }
+
+        /* Animations */
+        @keyframes backgroundFlow {
+            0% { transform: translateX(-25%) rotate(45deg); }
+            100% { transform: translateX(25%) rotate(45deg); }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+            100% { text-shadow: 0 0 20px rgba(34, 211, 238, 0.5); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Scroll Animations */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 1s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="animate-on-scroll">E-LEARNING ENGAGEMENT DETECTION SYSTEM</h1>
+            <p class="animate-on-scroll">Real-time emotion detection, voice analysis, and activity monitoring for better learning outcomes</p>
+            <div class="cta-buttons">
+                <a href="/login" class="btn btn-primary animate-on-scroll">Get Started</a>
+                <a href="#demo" class="btn btn-outline animate-on-scroll">View Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature-grid">
+            <div class="feature-card animate-on-scroll">
+                <i class="fas fa-brain feature-icon"></i>
+                <h3 class="feature-title">Real-Time AI Analysis</h3>
+                <p>Continuous processing of engagement metrics with &lt;1s latency</p>
+            </div>
+            
+            <div class="feature-card animate-on-scroll" style="transition-delay: 0.2s">
+                <i class="fas fa-eye feature-icon"></i>
+                <h3 class="feature-title">Advanced Eye Tracking</h3>
+                <p>Pupil dilation and gaze direction monitoring</p>
+            </div>
+            
+            <div class="feature-card animate-on-scroll" style="transition-delay: 0.4s">
+                <i class="fas fa-smile-beam feature-icon"></i>
+                <h3 class="feature-title">Facial Expression Analysis</h3>
+                <p>Emotion detection across 8 micro-expressions</p>
+            </div>
+            
+            <div class="feature-card animate-on-scroll" style="transition-delay: 0.6s">
+                <i class="fas fa-volume-mute feature-icon"></i>
+                <h3 class="feature-title">Ambient Noise Detection</h3>
+                <p>Background sound classification and filtering</p>
+            </div>
+            <div class="feature-card animate-in" style="animation-delay: 0.8s">
+                <i class="fas fa-chart-line feature-icon"></i>
+                <h3 class="feature-title">Engagement Scoring</h3>
+                <p>Real-time participation metrics and analytics</p>
+            </div>
+            
+            <div class="feature-card animate-in" style="animation-delay: 1s">
+                <i class="fas fa-video feature-icon"></i>
+                <h3 class="feature-title">Multi-Modal Analysis</h3>
+                <p>Combined video, audio, and biometric processing</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-item animate-on-scroll">
+                <div class="stat-number">85%</div>
+                <p>Engagement Increase</p>
+            </div>
+            <div class="stat-item animate-on-scroll" style="transition-delay: 0.2s">
+                <div class="stat-number">40ms</div>
+                <p>Real-Time Response</p>
+            </div>
+            <div class="stat-item animate-on-scroll" style="transition-delay: 0.4s">
+                <div class="stat-number">99.8%</div>
+                <p>Detection Accuracy</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="testimonial-card animate-on-scroll">
+            <p>"This system has revolutionized how we measure student engagement. The real-time analytics provide actionable insights that help improve teaching effectiveness."</p>
+            <div class="testimonial-author">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar" class="author-avatar">
+                <div>
+                    <h4>Dr. Sarah Johnson</h4>
+                    <p>Education Director, TechUniversity</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>EngageDetect</h3>
+            <p>© 2023 All rights reserved</p>
+            <div class="contact-info">
+                <p>Contact: contact@engagedetect.com</p>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Add hover effect to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+    <!-- Add before </body> -->
+<canvas id="particle-canvas"></canvas>
+
+<style>
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+</style>
+
+<script>
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 3 - 1.5;
+    this.speedY = Math.random() * 3 - 1.5;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    
+    if (this.x > canvas.width) this.x = 0;
+    if (this.x < 0) this.x = canvas.width;
+    if (this.y > canvas.height) this.y = 0;
+    if (this.y < 0) this.y = canvas.height;
+  }
+
+  draw() {
+    ctx.fillStyle = `rgba(34, 211, 238, ${this.size/3})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function init() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particles = Array(100).fill().map(() => new Particle());
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(particle => {
+    particle.update();
+    particle.draw();
+  });
+  requestAnimationFrame(animate);
+}
+
+init();
+animate();
+window.addEventListener('resize', init);
+</script>
+</body>
+</html>

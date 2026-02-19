@@ -1,0 +1,536 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="export-results">
+  <div class="header-section">
+    <h1>Session Performance Dashboard</h1>
+    <div class="session-info">
+      <div class="info-item">
+        <span class="material-icons">calendar_today</span>
+        <span>{{ session_date }}</span>
+      </div>
+      <div class="info-item">
+        <span class="material-icons">schedule</span>
+        <span>{{ session_duration }} minutes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <!-- Engagement Card -->
+    <div class="metric-card engagement-card">
+      <div class="metric-header">
+        <span class="material-icons">trending_up</span>
+        <h3>Engagement</h3>
+      </div>
+      <div class="gauge-container">
+        <div class="gauge" style="--percentage: {{ overall_engagement }}%;">
+          <div class="gauge-fill"></div>
+          <div class="gauge-cover">
+            <span class="percentage">{{ overall_engagement }}%</span>
+          </div>
+        </div>
+        <div class="engagement-status">
+          <span class="status-label">Status:</span>
+          <span class="status-value {{ 'good' if overall_engagement > 75 else 'average' if overall_engagement > 50 else 'poor' }}">
+            {{ "Excellent" if overall_engagement > 75 else "Good" if overall_engagement > 50 else "Needs Improvement" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual Metrics Card -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <span class="material-icons">visibility</span>
+        <h3>Visual Metrics</h3>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-item">
+          <div class="metric-label">Blinks</div>
+          <div class="metric-value">{{ blinks }}</div>
+          <div class="metric-description">Normal: 15-20/min</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">EAR Score</div>
+          <div class="metric-value">{{ ear }}</div>
+          <div class="metric-description">Eye Aspect Ratio</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">FPS</div>
+          <div class="metric-value">{{ fps }}</div>
+          <div class="metric-description">Avg. Frames/Second</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posture & Audio Card -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <span class="material-icons">hearing</span>
+        <h3>Posture & Audio</h3>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-item">
+          <div class="metric-label">Head Position</div>
+          <div class="metric-value">P: {{ pitch }}° Y: {{ yaw }}° R: {{ roll }}°</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Noise Level</div>
+          <div class="metric-value">{{ noise_level }}</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ noise_level_percent }}%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interaction Metrics Card -->
+    <div class="metric-card">
+      <div class="metric-header">
+        <span class="material-icons">touch_app</span>
+        <h3>Interaction Metrics</h3>
+      </div>
+      <div class="metric-grid">
+        <div class="metric-item">
+          <div class="metric-label">Mouse Clicks</div>
+          <div class="metric-value">{{ mouse_clicks }}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Questions Asked</div>
+          <div class="metric-value">{{ questions_asked }}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Notes Taken</div>
+          <div class="metric-value">{{ notes_taken }} times</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions-section">
+    <div class="actions">
+      <button id="sendReport" class="control-btn primary">
+        <span class="material-icons">send</span>
+        <span>Send Report to Instructor</span>
+      </button>
+      <button id="downloadReport" class="control-btn secondary">
+        <span class="material-icons">download</span>
+        <span>Download PDF Report</span>
+      </button>
+      <button id="viewDetails" class="control-btn secondary">
+        <span class="material-icons">insights</span>
+        <span>View Detailed Analytics</span>
+      </button>
+    </div>
+    
+    <div class="feedback-section">
+      <h3>Learning Feedback</h3>
+      <p class="feedback-content">{{ learning_feedback }}</p>
+      <button id="suggestResources" class="resource-btn">
+        <span class="material-icons">menu_book</span>
+        Suggest Learning Resources
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('sendReport').addEventListener('click', function(){
+    const btn = this;
+    btn.innerHTML = '<span class="spinner"></span> Sending...';
+    btn.disabled = true;
+    
+    fetch("{{ url_for('exportresult') }}", { method: "POST" })
+      .then(response => response.json())
+      .then(data => {
+        if(data.status){
+          showNotification('Report sent successfully!', 'success');
+        } else if(data.error){
+          showNotification('Error: ' + data.error, 'error');
+        }
+        btn.innerHTML = '<span class="material-icons">send</span> Send Report to Teacher';
+        btn.disabled = false;
+      })
+      .catch(console.error);
+  });
+
+  // Download report handler
+  document.getElementById('downloadReport').addEventListener('click', function(){
+    this.innerHTML = '<span class="spinner"></span> Generating...';
+    setTimeout(() => {
+      showNotification('Report downloaded successfully!', 'success');
+      this.innerHTML = '<span class="material-icons">download</span> Download PDF Report';
+    }, 1500);
+  });
+
+  // View details handler
+  document.getElementById('viewDetails').addEventListener('click', function(){
+    window.location.href = "{{ url_for('detailed_analytics') }}";
+  });
+
+  // Resource suggestion handler
+  document.getElementById('suggestResources').addEventListener('click', function(){
+    showNotification('Personalized resources generated! Check your dashboard.', 'success');
+  });
+
+  function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+      <span class="material-icons">${type === 'success' ? 'check_circle' : 'error'}</span>
+      ${message}
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 3000);
+    }, 10);
+  }
+</script>
+
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --success: #4cc9f0;
+    --warning: #f72585;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  .export-results {
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+
+  .header-section {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .header-section h1 {
+    font-size: 2.2rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .session-info {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    color: #6c757d;
+    font-size: 1rem;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .metric-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .engagement-card {
+    grid-column: span 2;
+  }
+
+  .metric-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .metric-header h3 {
+    font-size: 1.3rem;
+    color: var(--dark);
+  }
+
+  .metric-header .material-icons {
+    font-size: 1.8rem;
+    color: var(--primary);
+  }
+
+  .gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .gauge {
+    position: relative;
+    width: 180px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: 90px 90px 0 0;
+    background: #e9ecef;
+  }
+
+  .gauge-fill {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: calc(var(--percentage) * 0.9px);
+    background: linear-gradient(90deg, #4cc9f0, #4361ee);
+    border-radius: 90px 90px 0 0;
+    transition: height 1s ease-out;
+  }
+
+  .gauge-cover {
+    position: absolute;
+    bottom: 0;
+    width: 140px;
+    height: 70px;
+    background: white;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 70px 70px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .percentage {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--secondary);
+    margin-top: 1rem;
+  }
+
+  .engagement-status {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+  }
+
+  .status-label {
+    color: #6c757d;
+  }
+
+  .status-value {
+    font-weight: 600;
+  }
+
+  .good { color: #2ecc71; }
+  .average { color: #f39c12; }
+  .poor { color: #e74c3c; }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .metric-label {
+    font-size: 0.95rem;
+    color: #6c757d;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    color: var(--dark);
+  }
+
+  .metric-description {
+    font-size: 0.85rem;
+    color: #adb5bd;
+    text-align: center;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+    border-radius: 4px;
+  }
+
+  .actions-section {
+    background: white;
+    border-radius: 16px;
+    padding: 1.8rem;
+    box-shadow: var(--card-shadow);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .control-btn {
+    padding: 0.9rem 1.8rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .primary {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+  }
+
+  .secondary {
+    background: white;
+    color: var(--primary);
+    border: 1px solid #dee2e6;
+  }
+
+  .control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+
+  .primary:hover {
+    box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+  }
+
+  .feedback-section {
+    text-align: center;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+  }
+
+  .feedback-section h3 {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+  }
+
+  .feedback-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #495057;
+    margin-bottom: 1.5rem;
+  }
+
+  .resource-btn {
+    padding: 0.8rem 1.5rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    color: var(--primary);
+    font-weight: 500;
+  }
+
+  .resource-btn:hover {
+    background: #f1f3ff;
+    transform: translateY(-2px);
+  }
+
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
+  .notification.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+  }
+
+  .error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .engagement-card {
+      grid-column: span 1;
+    }
+    
+    .actions {
+      flex-direction: column;
+    }
+    
+    .control-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+{% endblock %}

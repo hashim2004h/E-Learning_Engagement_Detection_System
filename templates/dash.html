@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learn Session</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --panel-bg: #2C2C2C;
+            --primary-text: #FFFFFF;
+            --secondary-text: #CCCCCC;
+            --control-bg: rgba(0, 0, 0, 0.7);
+            --accent-red: #EA4335;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            height: 100vh;
+            display: flex;
+        }
+
+        /* Video Container */
+        .video-container {
+            flex: 3;
+            position: relative;
+            background: #000;
+        }
+
+        #localVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Engagement Panel */
+        .engagement-panel {
+            flex: 1;
+            max-width: 320px;
+            background: var(--panel-bg);
+            padding: 24px;
+            color: var(--primary-text);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Top Controls */
+        .top-controls {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meeting-info {
+            background: var(--control-bg);
+            padding: 8px 16px;
+            border-radius: 24px;
+            color: var(--primary-text);
+            font-size: 0.9rem;
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            background: var(--control-bg);
+            padding: 12px 24px;
+            border-radius: 32px;
+        }
+
+        .control-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--primary-text);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .control-btn.danger {
+            background: var(--accent-red);
+        }
+
+        /* Engagement Metrics */
+        .metric-section {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-title {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .confidence-graph {
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .engagement-panel {
+                max-width: 100%;
+                padding: 16px;
+            }
+
+            .bottom-controls {
+                bottom: 16px;
+                padding: 8px 16px;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video id="localVideo" autoplay playsinline></video>
+        
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <div class="meeting-info">
+                <span>E-Learn Session • 10:30 AM</span>
+            </div>
+            <div class="control-btn">
+                <span class="material-icons">people</span>
+            </div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <div class="control-btn" id="micButton">
+                <span class="material-icons">mic</span>
+            </div>
+            <div class="control-btn danger" id="endCallBtn">
+                <span class="material-icons">call_end</span>
+            </div>
+            <div class="control-btn" id="cameraButton">
+                <span class="material-icons">videocam</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engagement Panel -->
+    <div class="engagement-panel">
+        <div class="metric-section">
+            <div class="metric-title">Session Time</div>
+            <div class="metric-value" id="sessionTimer">00:12:34</div>
+        </div>
+
+        <div class="metric-section">
+            <div class="metric-title">Current Mood</div>
+            <div class="metric-value" id="moodValue">Engaged</div>
+        </div>
+
+        <div class="metric-section">
+            <div class="metric-title">Confidence Level</div>
+            <div class="metric-value" id="confidenceValue">92%</div>
+            <div class="confidence-graph"></div>
+        </div>
+
+        <div class="metric-section">
+            <div class="metric-title">Focus Level</div>
+            <div class="metric-value" id="focusValue">88%</div>
+        </div>
+    </div>
+
+    <script>
+        // Video Setup
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                const video = document.getElementById('localVideo');
+                video.srcObject = stream;
+            });
+
+        // Control Handlers
+        let isMuted = false;
+        let isCameraOff = false;
+
+        document.getElementById('micButton').addEventListener('click', () => {
+            isMuted = !isMuted;
+            const icon = document.querySelector('#micButton .material-icons');
+            icon.textContent = isMuted ? 'mic_off' : 'mic';
+        });
+
+        document.getElementById('cameraButton').addEventListener('click', () => {
+            isCameraOff = !isCameraOff;
+            const icon = document.querySelector('#cameraButton .material-icons');
+            icon.textContent = isCameraOff ? 'videocam_off' : 'videocam';
+            document.getElementById('localVideo').style.opacity = isCameraOff ? 0 : 1;
+        });
+
+        // Timer Update
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const hrs = Math.floor(seconds / 3600);
+            const mins = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            document.getElementById('sessionTimer').textContent = 
+                `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }, 1000);
+    </script>
+</body>
+</html>

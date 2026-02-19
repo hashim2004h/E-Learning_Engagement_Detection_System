@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard | E-LEARN</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Canvas-confetti for Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #06d6a0;
+      --accent: #ff6b6b;
+      --dark: #2b2d42;
+      --light: #f8f9fa;
+      --gray: #6c757d;
+      --light-gray: #e9ecef;
+      --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(120deg, #e0e7ff, #f0f4ff, #e0e7ff);
+      background-size: 300% 300%;
+      animation: bgGradient 15s ease infinite;
+      overflow-x: hidden;
+    }
+
+    @keyframes bgGradient {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* =============================================
+       Header (Google Meet style)
+       ============================================= */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Left: Logo */
+    .header .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header .logo img {
+      height: 32px;
+      width: auto;
+    }
+    .header .logo span {
+      font-size: 1.25rem;
+      color: #202124;
+      font-weight: 500;
+    }
+
+    /* Center: (empty placeholder if needed) */
+    .header .header-center {
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Right: Time/Date + Icons + Avatar */
+    .header .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #5f6368;
+      font-size: 0.95rem;
+    }
+
+    /* Time & Date styling */
+    .header .current-time {
+      font-weight: 500;
+      margin-right: 16px;
+      min-width: 130px;
+      text-align: right;
+      color: #202124;
+    }
+
+    /* Material icons in header */
+    .header .header-right .material-icons {
+      font-size: 24px;
+      cursor: pointer;
+      transition: color var(--transition), transform var(--transition);
+    }
+    .header .header-right .material-icons:hover {
+      color: #000;
+      transform: scale(1.2);
+    }
+
+    /* Apps‐grid icon */
+    .header .header-right .apps-icon {
+      font-size: 28px;
+    }
+
+    /* Avatar circle */
+    .header .header-right .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+    .header .header-right .avatar:hover {
+      transform: scale(1.1);
+    }
+
+    /* =============================================
+       Main Content & Bubbles
+       ============================================= */
+    .main-content {
+      padding: calc(68px + 16px) 16px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .main-content h1 {
+      font-size: 2.8rem;
+      color: var(--dark);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      margin-bottom: 2.5rem;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: rise 12s infinite ease-in;
+      z-index: 0;
+    }
+    @keyframes rise {
+      0%   { transform: translateY(0) scale(0.7); opacity: 0.7; }
+      50%  { opacity: 0.4; }
+      100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+    }
+    .bubble:nth-child(1) {
+      width: 140px; height: 140px;
+      bottom: -140px; left: 8%;
+      animation-duration: 14s; animation-delay: 0s;
+    }
+    .bubble:nth-child(2) {
+      width: 90px; height: 90px;
+      bottom: -90px; left: 30%;
+      animation-duration: 10s; animation-delay: 3s;
+    }
+    .bubble:nth-child(3) {
+      width: 160px; height: 160px;
+      bottom: -160px; left: 65%;
+      animation-duration: 18s; animation-delay: 1s;
+    }
+    .bubble:nth-child(4) {
+      width: 70px; height: 70px;
+      bottom: -70px; left: 50%;
+      animation-duration: 12s; animation-delay: 5s;
+    }
+    .bubble:nth-child(5) {
+      width: 110px; height: 110px;
+      bottom: -110px; left: 85%;
+      animation-duration: 16s; animation-delay: 2s;
+    }
+
+    /* =============================================
+       Join Card & Inputs
+       ============================================= */
+    .join-card {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      padding: 2.2rem 2rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(15px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+      margin-bottom: 3rem;
+      z-index: 2;
+    }
+
+    .input-container {
+      position: relative;
+      margin-bottom: 1.8rem;
+    }
+    .input-container input {
+      width: 100%;
+      padding: 15px 18px;
+      border: 2px solid var(--light-gray);
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      color: var(--dark);
+      background: transparent;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .input-container input:hover {
+      border-color: var(--light-gray);
+    }
+    .input-container input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 8px rgba(67, 97, 238, 0.4);
+    }
+    .input-container label {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      padding: 0 6px;
+      font-size: 1rem;
+      color: var(--gray);
+      pointer-events: none;
+      transition: all var(--transition);
+    }
+    .input-container input:focus + label,
+    .input-container input:not(:placeholder-shown) + label {
+      top: -11px;
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--primary);
+    }
+    .clear-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+    .input-container input:not(:placeholder-shown) ~ .clear-btn {
+      opacity: 1;
+    }
+    .validation-icon {
+      position: absolute;
+      right: 46px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.3rem;
+      opacity: 0;
+      transition: opacity var(--transition), color var(--transition);
+    }
+    .input-container.valid .validation-icon {
+      opacity: 1;
+      color: var(--secondary);
+    }
+    .input-container.invalid .validation-icon {
+      opacity: 1;
+      color: var(--accent);
+    }
+
+    .join-btn {
+      width: 100%;
+      padding: 15px 0;
+      font-size: 1.1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: #fff;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      background: linear-gradient(120deg, var(--primary), var(--secondary), var(--primary));
+      background-size: 200% 200%;
+      animation: gradientPulse 5s ease infinite;
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.7rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    @keyframes gradientPulse {
+      0%   { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .join-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(67, 97, 238, 0.4);
+    }
+    .join-btn .join-icon {
+      transition: transform var(--transition);
+    }
+    .join-btn:hover .join-icon {
+      transform: rotate(360deg);
+    }
+
+    /* =============================================
+       Popup Modal Styles
+       ============================================= */
+    .popup-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .popup-content {
+      background: #fff;
+      padding: 1.8rem 2.4rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+    }
+    .popup-content i {
+      font-size: 3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .popup-message {
+      font-size: 1.15rem;
+      color: var(--dark);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+    .popup-close {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .popup-close:hover {
+      background: var(--primary-dark);
+    }
+
+    /* =============================================
+       Accessibility & Responsive
+       ============================================= */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 16px;
+        height: auto;
+      }
+      .header .header-center {
+        display: none;
+      }
+      .join-card {
+        padding: 1.5rem 1.5rem;
+        margin: 2rem 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Floating Bubbles -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <div class="student-dash">
+    <!-- =============================================
+         Header 
+         (exactly like Google Meet: logo on left, 
+         time/date + icons + avatar on right)
+         ============================================= -->
+    <header class="header">
+      <!-- Left: Logo -->
+    <div class="header-left" style="font-family: 'Segoe UI', sans-serif; font-size: 28px; font-weight: bold; color: #54575a; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); letter-spacing: 2px;">E-Learn</div>
+
+
+      <!-- Center: (empty placeholder, could hold a search bar if desired) -->
+      <div class="header-center"></div>
+
+      <!-- Right: Current Time/Date, Icons, Avatar -->
+      <div class="header-right">
+        <!-- Current Time & Date -->
+        <div class="current-time" id="currentTime">—:— · —</div>
+
+        <!-- Help Icon -->
+        <span class="material-icons" title="Help">help_outline</span>
+        <!-- Chat Icon -->
+        <span class="material-icons" title="Chat">chat_bubble_outline</span>
+        <!-- Settings Icon -->
+        <span class="material-icons" title="Settings">settings</span>
+        <!-- Apps Grid Icon -->
+        <span class="material-icons apps-icon" title="Apps">apps</span>
+        <!-- User Avatar (replace “avatar.jpg” with your user’s image) -->
+        <div 
+          class="avatar" 
+          style="background-image: url('{{ url_for('static', filename='images/avatar.jpg') }}');" 
+          title="My Profile">
+        </div>
+      </div>
+    </header>
+
+    <!-- =============================================
+         Main Content
+         ============================================= -->
+    <main class="main-content">
+      <h1>Welcome, {{ current_user.user_data['full_name'] }}!</h1>
+
+      <div class="join-card">
+        <form action="{{ url_for('join_meeting') }}" method="POST" novalidate>
+          <!-- Meeting Code Input -->
+          <div class="input-container">
+            <input
+              type="text"
+              id="meetingCode"
+              name="code"
+              placeholder=" "
+              required
+              aria-label="Enter Meeting Code"
+            />
+            <label for="meetingCode">Meeting Code</label>
+            <button type="button" class="clear-btn" aria-label="Clear code">&times;</button>
+            <span class="validation-icon" aria-hidden="true">check_circle</span>
+          </div>
+
+          <!-- Teacher PIN Input -->
+          <div class="input-container">
+            <input
+              type="text"
+              id="teacherPin"
+              name="teacher_pin"
+              placeholder=" "
+              required
+              aria-label="Enter Teacher PIN"
+            />
+            <label for="teacherPin">Teacher PIN</label>
+            <button type="button" class="clear-btn pin-clear-btn" aria-label="Clear PIN">&times;</button>
+            <span class="validation-icon pin-validation-icon" aria-hidden="true">check_circle</span>
+          </div>
+
+          <button type="submit" class="join-btn">
+            <i class="fas fa-door-open join-icon"></i> Join Class
+          </button>
+        </form>
+
+        {% if error %}
+        <div class="popup-modal" id="errorPopup">
+          <div class="popup-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <p class="popup-message">{{ error }}</p>
+            <button class="popup-close">Close</button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Interaction Popup -->
+  <div id="popup" class="popup-modal" role="alert" aria-live="assertive">
+    <div class="popup-content">
+      <i class="fas fa-check-circle"></i>
+      <p class="popup-message" id="popupMessage">Action successful!</p>
+      <button class="popup-close">Close</button>
+    </div>
+  </div>
+
+  <script>
+    // Function to format current time/date as "HH:MM · D Mon"
+    function updateCurrentTime() {
+      const now = new Date();
+      // Format hours/minutes
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      if (hours < 10) hours = '0' + hours;
+      if (minutes < 10) minutes = '0' + minutes;
+      // Format date: e.g. "Fri 6 Jun"
+      const options = { weekday: 'short', day: 'numeric', month: 'short' };
+      const dateStr = now.toLocaleDateString('en-US', options);
+      document.getElementById('currentTime').textContent = `${hours}:${minutes} · ${dateStr}`;
+    }
+
+    // Initialize time immediately, then update every 60 seconds
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 60000);
+
+    // Show popup with message
+    function showPopup(message) {
+      const popup = document.getElementById('popup');
+      const msg = document.getElementById('popupMessage');
+      msg.textContent = message;
+      popup.style.display = 'flex';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 2000);
+    }
+
+    // Clear input fields
+    const meetingInput = document.getElementById('meetingCode');
+    const clearBtn = document.querySelector('.clear-btn');
+    clearBtn.addEventListener('click', () => {
+      meetingInput.value = '';
+      meetingInput.focus();
+      meetingInput.parentElement.classList.remove('valid', 'invalid');
+    });
+
+    const teacherPinInput = document.getElementById('teacherPin');
+    const pinClearBtn = document.querySelector('.pin-clear-btn');
+    pinClearBtn.addEventListener('click', () => {
+      teacherPinInput.value = '';
+      teacherPinInput.focus();
+      teacherPinInput.parentElement.classList.remove('valid', 'invalid');
+    });
+
+    // Validation icons
+    meetingInput.addEventListener('blur', () => {
+      const container = meetingInput.parentElement;
+      const icon = container.querySelector('.validation-icon');
+      if (meetingInput.value.trim().length > 0) {
+        container.classList.add('valid');
+        container.classList.remove('invalid');
+        icon.textContent = 'check_circle';
+      } else {
+        container.classList.remove('valid');
+        container.classList.add('invalid');
+        icon.textContent = 'error';
+      }
+    });
+
+    teacherPinInput.addEventListener('blur', () => {
+      const container = teacherPinInput.parentElement;
+      const icon = container.querySelector('.validation-icon');
+      if (teacherPinInput.value.trim().length > 0) {
+        container.classList.add('valid');
+        container.classList.remove('invalid');
+        icon.textContent = 'check_circle';
+      } else {
+        container.classList.remove('valid');
+        container.classList.add('invalid');
+        icon.textContent = 'error';
+      }
+    });
+
+    // On form submission: show popup + confetti
+    const joinForm = document.querySelector('.join-card form');
+    joinForm.addEventListener('submit', (e) => {
+      showPopup("Joining class...");
+      confetti({
+        particleCount: 60,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    });
+
+    // Close error popup if present
+    const errorPopup = document.getElementById('errorPopup');
+    if (errorPopup) {
+      const popupClose = errorPopup.querySelector('.popup-close');
+      popupClose.addEventListener('click', () => {
+        errorPopup.style.display = 'none';
+      });
+      errorPopup.addEventListener('click', (e) => {
+        if (e.target === errorPopup) {
+          errorPopup.style.display = 'none';
+        }
+      });
+    }
+
+    // Close general popup
+    const popup = document.getElementById('popup');
+    const popupCloseBtn = popup.querySelector('.popup-close');
+    popupCloseBtn.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
